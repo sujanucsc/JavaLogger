@@ -1,0 +1,34 @@
+<project name="javaLogger" default="all">
+    <property name="projecthome" location="."/>
+
+    <target name="all" depends="clean, compile,instrument,run"/>
+
+
+    <target name="compile" description="compile classes">
+        <delete dir="out"/>
+        <mkdir dir="out"/>
+        <javac source="1.5" srcdir="src" destdir="out" debug="true"
+               optimize="true" verbose="false" classpath="lib/javassist.jar">
+        </javac>
+    </target>
+
+    <target name="instrument" depends="compile" description="instrument the class">
+        <delete dir="output"/>
+        <mkdir dir="output"/>
+        <java fork="yes" classpath="out:lib/javassist.jar"
+              classname="javalogger.instrumentation.clazz.instrument.ClassInstrumentor">
+            <arg line="${projecthome}"/>
+        </java>
+    </target>
+
+    <target name="run" depends="instrument" description="run instrumented the class">
+        <java fork="yes" classpath="output" classname="javalogger.sample.source.SampleClass">
+        </java>
+    </target>
+
+    <target name="clean" description="remove all temporary files">
+        <delete dir="out"/>
+        <delete dir="output"/>
+    </target>
+
+</project>
